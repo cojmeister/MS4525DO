@@ -1,6 +1,7 @@
 [package]
-name = "airspeed"
+name = "MS4525DO"
 version = "0.1.0"
 edition = "2024"
+description = "A non-blocking, no-std, no dynamic allocations HAL for the MS4525DO airspeed sensor"
 
 [dependencies]
