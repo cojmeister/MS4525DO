@@ -7,6 +7,16 @@ description = "A non-blocking, no-std, no dynamic allocations HAL for the MS4525
 [dependencies]
 defmt = "1.0.1"
 embassy-time = "0.4.0"
-embedded-hal-async = "1.0.0"
-esp-hal = "0.23.1"
-heapless = "0.8.0"
+embedded-hal-async = { version = "1.0.0" }
+heapless = { version = "0.8.0   " } # Static allocations
+libm = "0.2.15"
+
+
+# Specify the target for no_std builds
+[profile.dev]
+opt-level = "s"  # Optimize for size (important for embedded)
+debug = true
+
+[profile.release]
+opt-level = "s"  # Optimize for size
+debug = true
