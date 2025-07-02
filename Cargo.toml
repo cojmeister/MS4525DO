@@ -6,7 +6,7 @@ description = "A non-blocking, no-std, no dynamic allocations HAL for the MS4525
 
 [dependencies]
 defmt = "1.0.1"
-embassy-time = "0.4.0"
+embassy-time = { version = "0.4.0", features = ["defmt"] }
 embedded-hal-async = { version = "1.0.0" }
 heapless = { version = "0.8.0   " } # Static allocations
 libm = "0.2.15"
