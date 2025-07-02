@@ -110,12 +110,12 @@ where
         let bridge_data_2 = extract_bridge_data(&data_2);
 
         // Parse temperature (11-bit)
-        let temp_1 = read_temperature(&data_1);
+        let temperature_digital_counts = read_temperature(&data_1);
         let temp_2 = read_temperature(&data_2);
 
         // Validate data consistency
-        if bridge_data_1 != bridge_data_2 || temp_1 != temp_2 {
-            info!("Data mismatch: pressure {} != {}, temp {} != {}", bridge_data_1, bridge_data_2, temp_1, temp_2);
+        if bridge_data_1 != bridge_data_2 || temperature_digital_counts != temp_2 {
+            info!("Data mismatch: pressure {} != {}, temp {} != {}", bridge_data_1, bridge_data_2, temperature_digital_counts, temp_2);
             return Err(Ms4525doError::StaleDataMismatch);
         }
 
@@ -123,7 +123,7 @@ where
         let diff_press_pa = calculate_pressure_differential_pa(bridge_data_1);
 
         // Convert temperature to Celsius
-        let temp_c = calculate_temperature_deg_c(temp_1);
+        let temp_c = calculate_temperature_deg_c(temperature_digital_counts);
 
         Ok((diff_press_pa, temp_c))
     }
@@ -135,8 +135,8 @@ fn calculate_airspeed(pressure_pa: f32, temp_c: f32) -> f32 {
     libm::sqrtf(2.0 * pressure_pa.abs() / air_density)
 }
 
-fn calculate_temperature_deg_c(temp_1: u16) -> f32 {
-    let temp_c = (200.0 * temp_1 as f32 / 2047.0) - 50.0;
+fn calculate_temperature_deg_c(temperature_counts: u16) -> f32 {
+    let temp_c = (200.0 * temperature_counts as f32 / 2047.0) - 50.0;
     temp_c
 }
 
@@ -147,7 +147,7 @@ fn calculate_pressure_differential_pa(bridge_data_1: u16) -> f32 {
 }
 
 fn read_temperature(data_1: &Vec<u8, 4>) -> u16 {
-    ((data_1[2] as u16) << 8) | ((data_1[3] & TEMPERATURE_MASK) as u16) >> 5
+    (((data_1[2] as u16) << 8) | ((data_1[3] & TEMPERATURE_MASK) as u16)) >> 5
 }
 
 fn extract_bridge_data(data_1: &Vec<u8, 4>) -> u16 {
@@ -161,7 +161,7 @@ fn extract_bridge_data(data_1: &Vec<u8, 4>) -> u16 {
 mod tests {
     use super::*;
     use heapless::Vec;
-
+    use parameterized::parameterized;
 
     #[test]
     fn test_extract_bridge_data() {
@@ -184,10 +184,10 @@ mod tests {
         assert!((pressure_pa - 0.0).abs() < 1.0, "Pressure calculation incorrect: {}", pressure_pa);
     }
 
-    #[test]
-    fn test_calculate_temperature_deg_c() {
-        let temp_raw = 1024; // ~25°C
-        let temp_c = calculate_temperature_deg_c(temp_raw);
-        assert!((temp_c - 25.0).abs() < 1.0, "Temperature calculation incorrect: {}", temp_c);
+    #[parameterized(digital_counts = {0x0000, 0x0266, 0x03FF},
+    expected_temp_c = { -50.0,  10.0, 50.0})]
+    fn test_calculate_temperature_deg_c(digital_counts: u16, expected_temp_c: f32) {
+        let temp_c = calculate_temperature_deg_c(digital_counts);
+        assert!((temp_c - expected_temp_c).abs() < 0.05, "Temperature calculation incorrect: {}", temp_c);
     }
 }
