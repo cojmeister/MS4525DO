@@ -67,7 +67,7 @@ where
         // Send measurement request
         let cmd = [READ_MR];
         self.i2c
-            .write(MS4525DO_ADDR, &cmd)
+            .write(self.address, &cmd)
             .await
             .map_err(|_| Ms4525doError::I2cError)?;
 
@@ -81,11 +81,11 @@ where
         data_2.resize_default(DATA_SIZE).map_err(|_| Ms4525doError::DataOutOfRange)?;
 
         self.i2c
-            .read(MS4525DO_ADDR, &mut data_1)
+            .read(self.address, &mut data_1)
             .await
             .map_err(|_| Ms4525doError::I2cError)?;
         self.i2c
-            .read(MS4525DO_ADDR, &mut data_2)
+            .read(self.address, &mut data_2)
             .await
             .map_err(|_| Ms4525doError::I2cError)?;
 
