@@ -1,4 +1,4 @@
-use crate::{calculate_airspeed, Ms4525do, Ms4525doError};
+use crate::{calculate_airspeed, Ms4525do};
 use defmt::info;
 use embassy_executor;
 use embassy_stm32::i2c::I2c;
