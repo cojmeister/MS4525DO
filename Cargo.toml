@@ -5,3 +5,8 @@ edition = "2024"
 description = "A non-blocking, no-std, no dynamic allocations HAL for the MS4525DO airspeed sensor"
 
 [dependencies]
+defmt = "1.0.1"
+embassy-time = "0.4.0"
+embedded-hal-async = "1.0.0"
+esp-hal = "0.23.1"
+heapless = "0.8.0"
