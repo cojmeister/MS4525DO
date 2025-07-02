@@ -20,3 +20,6 @@ debug = true
 [profile.release]
 opt-level = "s"  # Optimize for size
 debug = true
+
+[dev-dependencies]
+parameterized = "2.0.0"
