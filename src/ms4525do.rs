@@ -129,7 +129,7 @@ where
     }
 }
 
-fn calculate_airspeed(pressure_pa: f32, temp_c: f32) -> f32 {
+pub fn calculate_airspeed(pressure_pa: f32, temp_c: f32) -> f32 {
     let temp_k = temp_c + 273.15;
     let air_density = 101325.0 / (287.05 * temp_k); // Standard pressure at sea level
     libm::sqrtf(2.0 * pressure_pa.abs() / air_density)
