@@ -12,10 +12,16 @@ Has no dynamic memory allocations due to heapless.
 ### Embassy Task Usage
 I'm trying (miserably failing) to implement this as an embassy async task. Like so:
 ```rust
-use esp_hal::i2c::master::{I2c, AnyI2c};
+#![no_std]
+#![no_main]
 
-// Assume your I2C peripheral is of type `MyI2c`
-type AsyncMs4525DoSensor = Ms4525do<I2c<'static, AnyI2c>>;
+use crate::{calculate_airspeed, Ms4525do};
+use defmt::info;
+use embassy_sync::blocking_mutex::raw::NoopRawMutex;
+use embassy_sync::channel::Channel;
+use embassy_time::{Duration, Timer};
+use esp_hal::i2c::master::I2c;
+use esp_hal::{gpio, timer::timg::TimerGroup};
 
 /// Embassy task to periodically read MS4525DO sensor data and calculate airspeed.
 ///
@@ -27,10 +33,11 @@ type AsyncMs4525DoSensor = Ms4525do<I2c<'static, AnyI2c>>;
 ///
 /// * `sensor` - The MS4525DO sensor instance.
 /// * `channel` - Channel to send (pressure, temperature, airspeed) tuples.
-#[task]
-pub async fn airspeed_task(
-    mut sensor: AsyncMs4525DoSensor,
-    channel: &'static Channel<NoopRawMutex, (f32, f32, f32), 8>,
+
+// Declare async tasks
+#[embassy_executor::task]
+async fn read_airspeed_task(mut sensor: Ms4525do<I2c<'static, esp_hal::peripherals::I2C0>>,
+                            channel: &'static Channel<NoopRawMutex, (f32, f32, f32), 8>,
 ) {
     loop {
         match sensor.read_data().await {
