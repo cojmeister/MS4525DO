@@ -16,6 +16,7 @@
 //! - An I2C peripheral that implements `embedded_hal::i2c::I2c`
 //! - A delay provider that implements `embedded_hal::delay::DelayNs`
 
+//!
 //! Note: This is a template example that needs to be adapted for your specific platform.
 //! The code below is commented out as it requires platform-specific implementations.
 //! Uncomment and modify according to your hardware setup.

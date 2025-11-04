@@ -16,6 +16,7 @@
 //! - An I2C peripheral that implements `embedded_hal_async::i2c::I2c`
 //! - Embassy runtime configured for your platform
 
+//!
 //! Note: This is a template example that needs to be adapted for your specific platform.
 //! The code below is commented out as it requires platform-specific implementations.
 //! Uncomment and modify according to your hardware setup.
@@ -43,13 +44,13 @@
 // };
 // use esp_backtrace as _;
 
-/// Static channel for sharing sensor data between tasks
+// /// Static channel for sharing sensor data between tasks
 // static SENSOR_DATA_CHANNEL: Channel<NoopRawMutex, (f32, f32, f32), 8> = Channel::new();
-
-/// Embassy task to periodically read MS4525DO sensor data.
-///
-/// Reads pressure and temperature from the sensor at ~50 Hz,
-/// calculates airspeed, and sends the results over a channel.
+//
+// /// Embassy task to periodically read MS4525DO sensor data.
+// ///
+// /// Reads pressure and temperature from the sensor at ~50 Hz,
+// /// calculates airspeed, and sends the results over a channel.
 // #[embassy_executor::task]
 // async fn read_airspeed_task(
 //     mut sensor: Ms4525do<I2c<'static, esp_hal::peripherals::I2C0>>,
@@ -83,12 +84,11 @@
 //         Timer::after(Duration::from_millis(20)).await;
 //     }
 // }
-
-/// Embassy task to consume sensor data.
-///
-/// This is an example of how another task can receive and process
-/// the sensor data from the channel.
-///
+//
+// /// Embassy task to consume sensor data.
+// ///
+// /// This is an example of how another task can receive and process
+// /// the sensor data from the channel.
 // #[embassy_executor::task]
 // async fn process_data_task() {
 //     loop {

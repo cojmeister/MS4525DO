@@ -36,6 +36,14 @@ log = { version = "0.4", optional = true }
 [dev-dependencies]
 # For testing only
 
+[[example]]
+name = "std_mock_example"
+required-features = ["blocking"]
+
+[[example]]
+name = "blocking_example"
+required-features = ["blocking"]
+
 [profile.dev]
 opt-level = "s"  # Optimize for size (important for embedded)
 debug = true
